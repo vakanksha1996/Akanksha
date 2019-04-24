@@ -1,0 +1,73 @@
+﻿
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>@ViewBag.Title - My ASP.NET Application</title>
+    <link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.5.0/css/all.css' integrity='sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU' crossorigin='anonymous'/>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/jquery")
+    
+
+</head>
+
+<body>
+    <nav class="navbar navbar-inverse navbar-fixed-top" >
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a href="/Home/Index">  <i class='fas fa-shopping-bag' style='font-size:36px;margin:5px'></i></a>
+
+            </div>
+            <div class="collapse navbar-collapse" id="myNavbar">
+                <ul class="nav navbar-nav">
+                    <li><a href="/Home/About">About</a></li>
+                    <li><a href="#">Service</a></li>
+                    <li class="dropdown">
+                       <a class="dropdown-toggle" data-toggle="dropdown">Shop By<span class="caret"></span></a>
+                                                                    
+                        <ul class="dropdown-menu">
+                            <li>@Html.ActionLink("Electronics","GetSubcategoriesByCategoryName","SubCategory",new { CategoryName = "Electronics,Computers & Phones" },htmlAttributes: null)</li>
+                            <li>@Html.ActionLink("Kids", "GetSubcategoriesByCategoryName", "SubCategory", new { CategoryName = "Kids" }, htmlAttributes: null)</li>
+                            <li>@Html.ActionLink("Men's Fashion", "GetSubcategoriesByCategoryName", "SubCategory", new { CategoryName = "Men's Fashion" }, htmlAttributes: null)</li>
+                            <li>@Html.ActionLink("Women's Fashion", "GetSubcategoriesByCategoryName", "SubCategory", new { CategoryName = "Women's Fashion" }, htmlAttributes: null)</li>
+                            <li>@Html.ActionLink("Pet Supplies", "GetSubcategoriesByCategoryName", "SubCategory", new { CategoryName = "Pet Supplies" }, htmlAttributes: null)</li>
+                            <li>@Html.ActionLink("Home & Kitchen's Appliances", "GetSubcategoriesByCategoryName", "SubCategory", new { CategoryName = "Home & Kitchen's Appliances" }, htmlAttributes: null)</li>
+                            <li>@Html.ActionLink("Books", "GetSubcategoriesByCategoryName", "SubCategory", new { CategoryName = "Books" }, htmlAttributes: null)</li>
+                        </ul>
+                    </li>
+                </ul>
+                <form class="navbar-form navbar-left" action="/Product/GetProductByNameOrCategory" method="get">
+                    <div class="form-group">
+                        <input type="text" name="searchkey" class="form-control" style="width:250px" placeholder="Search by Product or Category ">
+                    </div>
+                    <button type="submit"  class="btn btn-default"><i class="glyphicon glyphicon-search"></i></button>
+                </form>
+                @Html.Partial("_LoginPartial")
+
+            </div>
+        </div>
+       
+    </nav>
+
+    <div>
+        @RenderBody()
+        <hr />
+        <footer>
+            <p>&copy; @DateTime.Now.Year - My Shopping Application</p>
+        </footer>
+    </div>
+
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+</body>
+</html>

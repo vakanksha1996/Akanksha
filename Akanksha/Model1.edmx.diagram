@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="7c6440084cc847aeb23a86b21d9ae3d6" Name="Diagram1">
+        <EntityTypeShape EntityType="AkankshaModel.C__MigrationHistory" Width="1.5" PointX="0.75" PointY="4.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="AkankshaModel.Address" Width="1.5" PointX="5.25" PointY="8.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="AkankshaModel.AspNetRole" Width="1.5" PointX="0.75" PointY="11.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="AkankshaModel.AspNetUserClaim" Width="1.5" PointX="5.25" PointY="11.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="AkankshaModel.AspNetUserLogin" Width="1.5" PointX="5.25" PointY="14.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="AkankshaModel.AspNetUser" Width="1.5" PointX="3" PointY="10.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="AkankshaModel.Cart" Width="1.5" PointX="8.25" PointY="11" IsExpanded="true" />
+        <EntityTypeShape EntityType="AkankshaModel.Category" Width="1.5" PointX="3.75" PointY="4.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="AkankshaModel.Customer" Width="1.5" PointX="5.25" PointY="20.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="AkankshaModel.Order" Width="1.5" PointX="8.25" PointY="7" IsExpanded="true" />
+        <EntityTypeShape EntityType="AkankshaModel.OrderDetail" Width="1.5" PointX="10.5" PointY="7.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="AkankshaModel.Payment" Width="1.5" PointX="6" PointY="5.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="AkankshaModel.Product" Width="1.5" PointX="8.25" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="AkankshaModel.State" Width="1.5" PointX="3" PointY="1.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="AkankshaModel.Subcategory" Width="1.5" PointX="6" PointY="1" IsExpanded="true" />
+        <EntityTypeShape EntityType="AkankshaModel.sysdiagram" Width="1.5" PointX="10.75" PointY="1.75" IsExpanded="true" />
+        <AssociationConnector Association="AkankshaModel.FK_Address_AspNetUsers" ManuallyRouted="false" />
+        <AssociationConnector Association="AkankshaModel.FK_Address_State" ManuallyRouted="false" />
+        <AssociationConnector Association="AkankshaModel.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" ManuallyRouted="false" />
+        <AssociationConnector Association="AkankshaModel.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" ManuallyRouted="false" />
+        <AssociationConnector Association="AkankshaModel.FK_Cart_AspNetUsers" ManuallyRouted="false" />
+        <AssociationConnector Association="AkankshaModel.FK_Order_AspNetUsers" ManuallyRouted="false" />
+        <AssociationConnector Association="AkankshaModel.FK_Table_1_AspNetUsers" ManuallyRouted="false" />
+        <AssociationConnector Association="AkankshaModel.FK_Cart_Product" ManuallyRouted="false" />
+        <AssociationConnector Association="AkankshaModel.FK_Subcategory_Category" ManuallyRouted="false" />
+        <AssociationConnector Association="AkankshaModel.FK_Order_Payment" ManuallyRouted="false" />
+        <AssociationConnector Association="AkankshaModel.FK_OrderDetails_Order" ManuallyRouted="false" />
+        <AssociationConnector Association="AkankshaModel.FK_OrderDetails_Product" ManuallyRouted="false" />
+        <AssociationConnector Association="AkankshaModel.FK_Product_Subcategory" ManuallyRouted="false" />
+        <AssociationConnector Association="AkankshaModel.FK_Subcategory_Subcategory1" ManuallyRouted="false" />
+        <AssociationConnector Association="AkankshaModel.AspNetUserRoles" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

@@ -1,0 +1,163 @@
+﻿@model PagedList.IPagedList<Akanksha.Subcategory>
+@using PagedList.Mvc;
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+@*<script src="~/Scripts/jquery-ui-1.10.4.custom.min.js"></script>*@
+@*<link href="~/Content/jquery-ui-1.10.4.custom.min.css" rel="stylesheet" />*@
+<script src="~/Scripts/jquery-ui.js"></script>
+<link href="~/Content/jquery-ui.css" rel="stylesheet" />
+<script src="~/Scripts/bootbox.js"></script>
+
+<script type="text/javascript">
+ $(document).ready(function() {
+    $("#txtSearch").autocomplete({
+        source: function(request, response) {
+            $.ajax({
+                url: "/SubCategory/Getsubcategories",
+                type: "POST",
+                dataType: "json",
+                data: {
+                    keyword: request.term
+                },
+                success: function(data) {
+                    response($.map(data, function(item) {
+                        return {
+                            label: item,
+                            value: item
+                        };
+                    }))
+                },
+                error: function() {
+                    alert('something went wrong !');
+                }
+            })
+        },
+        messages: {
+            noResults: "",
+            results: ""
+        },
+
+
+    });
+    $(".delete").click(function () {
+        var subcategoryid = $(this).attr("data-id");
+        bootbox.confirm("Are you want to delete it?", function (result) {
+            if (result) {
+                $.ajax({
+                    url: "/SubCategory/Delete",
+                    data: { Id: subcategoryid },
+                    method: "GET",
+
+                    dataType: "json",
+                    contentType: "application/json; charset=utf-8",
+
+                    success: function (response) {
+
+                        if (response == "success") {
+                          
+                            toastr.success("Category successfully deleted");
+                            location.reload(true);
+
+                           
+                        }
+                        else {
+                            if (response == "ProductAlert") {
+                                alert("You cannot delete Category......because there are some products exists in this department.");
+
+                            }
+                            else {
+                                alert("You cannot delete Category......because there are some subcategories  exists in this department.");
+
+                            }
+                        }
+                      
+                     
+                        
+                       // location.reload(true);
+
+                    },
+                    error: function () {
+                        toastr.options.timeout = 0;
+                        alert("some error occured.");
+
+                    }
+                })
+            }
+        })
+       
+    });
+}) </script>
+
+@RenderPage("~/Views/Admin/Index.cshtml")
+
+
+
+<div class="main" style="border:1px solid black">
+    <h2>SubCategories</h2>
+
+    <p>
+        @Html.ActionLink("Create New", "New")
+    </p>
+    @using (Html.BeginForm("Index", "SubCategory", FormMethod.Get))
+    {
+        <p>
+            Find by name: @Html.TextBox("SearchString", ViewBag.CurrentFilter as string, new { id = "txtSearch" })
+            <input type="submit" value="Search" />
+        </p>
+    }
+    <table class="table">
+        <tr>
+            <th>
+                @Html.ActionLink("Name", "Index", new { sortOrder = ViewBag.NameSortParm, currentFilter = ViewBag.CurrentFilter }, new { @style = "color:#428bca" })
+            </th>
+            <th>
+                Pic
+
+            </th>
+
+            <th>
+                @Html.Label("Category Name")
+            </th>
+            <th>Action</th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    <img src=@item.Pic alt="no image" width="100px" height="70px" />
+                </td>
+              
+               
+                <td>
+                    @Html.DisplayFor(modelItem => item.Category.Name)
+                </td>
+                <td>
+
+                    @Html.ActionLink("Edit", "Edit", "SubCategory", new { id = item.SubcategoryId }, htmlAttributes: new { @class = "btn btn-primary" })  |
+
+
+                  <a class="btn btn-danger delete" data-id=@item.SubcategoryId >Delete</a>
+
+    
+
+               </td>
+            </tr>
+        }
+
+    </table>
+    Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+
+    @Html.PagedListPager(Model, page => Url.Action("Index",
+    new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))
+</div>
+
+@section Scripts
+{
+    <script src="@Url.Content("~/Scripts/DropdownInnavbar.js")"></script>
+   
+
+
+}

@@ -1,0 +1,106 @@
+﻿@model PagedList.IPagedList<Akanksha.Product>
+@using PagedList.Mvc;
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+<link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.5.0/css/all.css' integrity='sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU' crossorigin='anonymous' />
+
+@{ 
+    ViewBag.Title = "GetSubcategoriesByCategoryName";
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $(".cartbtn").click(function () {
+            var productid = $(this).attr("data-id");
+            $.ajax({
+                url: "/Cart/AddtoCart",
+                data: {
+                    productid: productid
+                },
+                method: "GET",
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function (response) {
+                    if (response) {
+                        toastr.success("Item added to Cart");
+                    }
+                    else {
+                        toastr.success("Item already added to  Cart")
+                    }
+                },
+                error: function () {
+                    window.location="http://localhost:55437/Account/Login";
+                }
+            })
+        })
+    })
+  
+
+
+</script>
+<div class="container body-content">
+
+  
+
+
+        <h2>@Model.FirstOrDefault().Subcategory.Name</h2>
+    <hr />
+    <div class="row">
+       
+        <div class="dropdown">
+            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                Sort By
+                <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu">
+                <li>@Html.ActionLink("Name: Ascending", "GetProductsByName", new { name=Model.First().Subcategory.Name,sortOrder = ViewBag.NameAsenParm, currentFilter = ViewBag.CurrentFilter })</li>
+                <li>@Html.ActionLink("Name: Descending", "GetProductsByName", new { name = Model.First().Subcategory.Name, sortOrder = ViewBag.NameDescParm, currentFilter = ViewBag.CurrentFilter })</li>
+                <li>@Html.ActionLink("Price: Low To High", "GetProductsByName", new { name = Model.First().Subcategory.Name, sortOrder = ViewBag.PriceAsenParm, currentFilter = ViewBag.CurrentFilter })</li>
+                <li>@Html.ActionLink("Price: High To Low", "GetProductsByName", new { name = Model.First().Subcategory.Name, sortOrder = ViewBag.PriceDescParm, currentFilter = ViewBag.CurrentFilter })</li>
+
+              </ul>
+        </div>
+       
+       </div>
+    <br />
+   
+    <div class="row">
+        <div class="row">
+            @foreach (var item in Model)
+            {
+                if (item.NumberOfStock > 0) { 
+                <div class="col-sm-3" style="height:380px;margin-bottom:8px">
+                    <div class="panel panel-primary" style="height:100%">
+                        <div class="panel-heading" style="height:30%"><a  href="@Url.Action("ProductPage", "Product", new { id= item.ProductId })">@item.Name</a></div>
+                        <div class="panel-body" style="height:70%;position:relative">
+                            <div style="height:10%"><span style="float:left">Rs.@item.Price</span>
+                         <button type="button" data-id=@item.ProductId class="cartbtn" style="float:right;background-color:white;border:none"><i class="fas fa-cart-plus" style="font-size:24px"></i></button>
+
+                          @*<button  type="button" onclick="location.href='@Url.Action("AddtoCart", "Cart",new { productid = item.ProductId })'" style="float:right"><i class="fas fa-cart-plus" style="font-size:24px"></i></button>*@
+                            </div>
+
+                            <a  href="@Url.Action("ProductPage", "Product", new { id = item.ProductId})"><img src=@item.Pic class="img-responsive" style="width:100%;height:70%" alt="Image"></a>
+                                           <span style="height:10%"></span>
+                        @{ 
+                            if (item.NumberOfStock < 10)
+                            {
+                                <span style="color:red; position: absolute;bottom:0;height:10%">Only @item.NumberOfStock left in stock</span>
+                            }
+                        }
+                        </div>
+
+                    </div>
+                </div>
+                                }
+                            }
+        </div>
+    </div>
+    Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+
+    @Html.PagedListPager(Model, page => Url.Action("GetProductsByName",
+    new { name = Model.First().Subcategory.Name, page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))
+   
+   
+    
+</div><br><br>
+
+

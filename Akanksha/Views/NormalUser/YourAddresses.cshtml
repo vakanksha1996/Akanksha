@@ -1,0 +1,74 @@
+﻿@model IEnumerable<Akanksha.Address>
+
+@{
+    ViewBag.Title = "YourAddresses";
+}
+<script src="~/Scripts/bootbox.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+       $(".delete").click(function () {
+          var addrid= $(this).attr("data-id");
+            bootbox.confirm("Are you want to delete?", function (result) {
+               // alert(addrid);
+                if (result) {
+                    $.ajax({
+                        url: "/NormalUser/DeleteAddress/" + addrid,
+
+                        success: function () {
+
+                            location.reload(true);
+                        },
+
+                        error: function () {
+                            toastr.error("Something Wrong");
+                        }
+
+                    })
+                }
+            });
+        });
+
+    })
+
+</script>
+    <div class="container body-content">
+
+         <h2>YourAddresses</h2>
+
+         <hr />
+
+         <div class="row">
+
+            <div class="col-lg-3" style="height:200px;text-align:center;border:solid 1px black;margin:5px">
+                 <br />
+                 <br />
+                 <br />
+                 <br />
+                <a style="color:cornflowerblue" href="/NormalUser/AddAddress"> &#9534;  Add Address</a> 
+          
+            </div>
+
+         @foreach (var address in Model)
+           { 
+
+            <div class="col-lg-3" style="height:200px;border:solid 1px black;margin:5px;padding-top:5px">
+
+               <div><b>@address.AspNetUser.UserName</b></div>
+               <div>@address.HouseNo</div>
+               <div>@address.Colony_Street</div>
+               <div>@address.City, @address.State.Name @address.Pincode</div>
+               <div>India</div>
+               <div>@address.AspNetUser.PhoneNumber</div>
+               <br /><br />
+               <div>@Html.ActionLink("Edit","EditAddress", "NormalUser",new { Id = address.AddressId },new { @style = "color:cornflowerblue" }) |<button type="button" class="btn-link delete" data-id=@address.AddressId>Delete</button>
+                </div>
+        
+           </div>
+
+          }                            
+
+    </div>
+
+</div>
+

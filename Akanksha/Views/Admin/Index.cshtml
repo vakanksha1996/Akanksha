@@ -1,0 +1,25 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+
+    <div class="sidenav">
+        <a href="/Admin/AdminProfile">Your Profile</a> 
+         
+        <button class="dropdown-btn">
+            Manage
+            <i class="fa fa-caret-down"></i>
+        </button>
+
+        <div class="dropdown-container">
+            <a href="/Category/Index">Department</a>
+            <a href="/SubCategory/Index">Category</a>
+            <a href="/Product/Index">Products</a>
+        </div>  
+               
+        <a href="/Admin/GetAllUsersProfile">User Profile</a>
+    </div>
+@section Scripts
+{
+    <script src="@Url.Content("~/Scripts/DropdownInnavbar.js")"></script>
+}

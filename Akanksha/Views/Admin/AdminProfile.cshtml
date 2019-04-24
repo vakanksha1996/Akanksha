@@ -1,0 +1,41 @@
+﻿@model Akanksha.AspNetUser
+
+@{
+    ViewBag.Title = "AdminProfile";
+}
+
+@RenderPage("~/Views/Admin/Index.cshtml")
+
+<div class="main">
+    <h2> Your Profile</h2>
+    <div>
+
+        <hr />
+        <dl class="dl-horizontal">
+            <dt>
+                @Html.DisplayNameFor(model => model.Email)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Email)
+            </dd>
+
+            
+
+            <dt>
+                @Html.DisplayNameFor(model => model.PhoneNumber)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.PhoneNumber)
+            </dd>
+        </dl>
+    </div>
+    <div>
+        @Html.ActionLink("Edit", "EditAdminProfile", new { id = Model.Id }, htmlAttributes: new { @class = "btn btn-primary" })
+    </div> 
+</div>
+@section Scripts
+{
+    <script src="@Url.Content("~/Scripts/DropdownInnavbar.js")"></script>
+}

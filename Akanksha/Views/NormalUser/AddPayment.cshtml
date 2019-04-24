@@ -1,0 +1,142 @@
+﻿@model Akanksha.Customer
+@using Microsoft.AspNet.Identity;
+
+
+@{
+    ViewBag.Title = "AddPayment";
+}
+
+@Scripts.Render("~/bundles/jqueryval")
+@Scripts.Render("~/bundles/jquery")
+
+<script type="text/javascript">
+        $(document).ready(function () {
+
+           $("#btnSave").click(function (e) {
+                e.preventDefault(); // <------------------ stop default behaviour of button
+                var element = this;
+                $.ajax({
+                    url: '@Url.Action("SavePaymentCard", "NormalUser")',
+                    type: "GET",
+                    data: { UserId: $("#id").val(), ccn:$("#ccn").val() },
+                    dataType: "json",
+                    contentType: "application/json; charset=utf-8",
+                    success: function(response) {
+                       
+                        if (response == true)
+                        {
+                           toastr.success("Card added successfully");
+                           $("#ccn").val("");
+                           $("#month").val("");
+                           $("#year").val("");
+                           $("#name").val("");
+                         //  $("form").reset();
+                         //  $(element).closest("form").reset();//<------------ submit form
+                        }
+
+                       else
+                       {
+                            toastr.error("Error occurs on the Database level!");
+                       }
+                    },
+                    error: function() {
+                        alert("An error has occured!!!");
+                    }
+                });
+            });
+
+        });
+
+</script>
+<div class="container body-content">
+    <h2>Add a New Payment Method</h2>
+    <hr />
+    <div class="row">
+        <div class="col-md-4" style="float:left">
+            <h2>Credit or Debit Cards</h2>
+            <div>Amazon accepts all major credit and debit cards</div><br />
+            <h4>Add a Card</h4>
+        </div>
+        <div class="col-md-7">
+            <div>
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqg976bLfGPtSoO_xLPjFU6112GH-uhUWV9XQRlY9IxXWxlWIT" width="180" height="100" />
+            </div>
+
+
+        </div>
+    </div>
+    <div>
+
+        <form>
+            @Html.HiddenFor(m=>m.Id,htmlAttributes: new { id="id" })
+            <div class="form-group">
+                <label>NameOnCard</label>
+                <div class="tt-container">
+                    <input id="name" name="name" required type="text" class="form-control" />
+
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Credit Card Number</label>
+                <div class="tt-container">
+                    <input id="ccn" name="ccn" type="text" class="form-control" />
+
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Month of CardExpiry</label>
+                <div class="tt-container">
+                    <select class="form-control" id="month" name="month">
+                        <option>01</option>
+                        <option>02</option>
+                        <option>03</option>
+                        <option>04</option>
+                        <option>05</option>
+                        <option>06</option>
+                        <option>07</option>
+                        <option>08</option>
+                        <option>09</option>
+                        <option>10</option>
+                        <option>11</option>
+                        <option>12</option>
+
+                    </select>
+                </div>
+           
+            <div class="form-group">
+                <label>Year of CardExpiry</label>
+                <div class="tt-container">
+                    <select class="form-control" id="year" name="year">
+                        <option>2018</option>
+                        <option>2019</option>
+                        <option>2020</option>
+                        <option>2021</option>
+                        <option>2022</option>
+                        <option>2023</option>
+                        <option>2024</option>
+                        <option>2025</option>
+                        <option>2026</option>
+                        <option>2027</option>
+                        <option>2028</option>
+                        <option>2029</option>
+                        <option>2030</option>
+
+                    </select>
+                </div>
+            </div>
+    </div>
+    <br />
+    <button id="btnSave" type="button" class="btn btn-primary">Save</button> 
+        </form>
+       
+</div>
+    <div>
+        @Html.ActionLink("Back to List", "Index")
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+  
+}

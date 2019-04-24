@@ -1,0 +1,155 @@
+﻿@model PagedList.IPagedList<Akanksha.Product>
+@using PagedList.Mvc;
+
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+<script src="~/Scripts/jquery-ui.js"></script>
+<script src="~/Scripts/bootbox.js"></script>
+
+<link href="~/Content/jquery-ui.css" rel="stylesheet" />
+<script type="text/javascript">
+    $(document).ready(function() {
+        $("#txtSearch").autocomplete({
+          source: function(request, response) {
+            $.ajax({
+                url: "/Product/GetProducts",
+                type: "POST",
+                dataType: "json",
+                data: {
+                    keyword: request.term
+                },
+                success: function(data) {
+                    response($.map(data, function(item) {
+                        return {
+                            label: item,
+                            value: item
+                        };
+                    }))
+                },
+                error: function() {
+                    alert('something went wrong !');
+                }
+            })
+        },
+        messages: {
+            noResults: "",
+            results: ""
+        },
+        
+        
+        });
+        $(".delete").click(function () {
+            var productid = $(this).attr("data-id");
+            bootbox.confirm("Are you want to delete it?", function (result) {
+                $.ajax({
+                    url: "/Product/Delete",
+                    data: { Id: productid},
+                  
+
+                    success: function (response) {
+
+                        if (response) {
+                            location.reload(true);
+                            toastr.success("Product successfully deleted.");
+                        }
+
+
+
+                    },
+                    error: function () {
+                        toastr.options.timeout = 0;
+                        alert("some error occured.");
+
+                    }
+                })
+            })
+
+        });
+}) </script>  
+
+@RenderPage("~/Views/Admin/Index.cshtml")
+
+<div class="main" style="border:1px solid black">
+    <h2>Products</h2>
+
+    <p>
+        @Html.ActionLink("Create New", "New")
+    </p>
+    @using (Html.BeginForm("Index", "Product", FormMethod.Get))
+    {
+        <p>
+            Find by name: @Html.TextBox("SearchString",ViewBag.CurrentFilter as string,new { id = "txtSearch" })
+            <input type="submit" value="Search" />
+        </p>
+    }
+    <table class="table">
+        <tr>
+            <th>
+                @Html.ActionLink("Name", "Index", new { sortOrder = ViewBag.NameSortParm, currentFilter = ViewBag.CurrentFilter }, new { @style = "color:#428bca" })
+            </th>
+            <th>Id</th>
+            <th>
+                Pic
+           </th>
+
+            <th>
+                Number Of Stock
+            </th>
+          
+            <th>
+                @Html.ActionLink("Price", "Index", new { sortOrder = ViewBag.PriceSortParm, currentFilter = ViewBag.CurrentFilter }, new { @style = "color:#428bca" })
+            </th>
+           
+           
+            <th>
+                @Html.Label("Category Name")
+            </th>
+            <th>Action</th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>@Html.DisplayFor(modelItem => item.ProductId)
+</td>
+                <td>
+                    <img src=@item.Pic alt="no image" width="100" height="70" />
+                </td>
+                <td style="text-align:center">
+                    @Html.DisplayFor(modelItem => item.NumberOfStock)
+                </td>
+               
+                <td>
+                    @Html.DisplayFor(modelItem => item.Price)
+                   
+                </td>
+             
+                <td>
+                    @Html.DisplayFor(modelItem => item.Subcategory.Name)
+                </td>
+                <td>
+
+                    @Html.ActionLink("Edit", "Edit", "Product", new { id = item.ProductId}, htmlAttributes: new { @class = "btn btn-primary" })  |
+                    <a class="btn btn-danger delete" data-id=@item.ProductId >Delete</a>
+                </td>
+            </tr>
+        }
+
+    </table>
+    Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+
+    @Html.PagedListPager(Model, page => Url.Action("Index",
+    new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))
+
+    
+</div>
+
+
+
+@section Scripts
+{
+    <script src="@Url.Content("~/Scripts/DropdownInnavbar.js")"></script>
+   
+}

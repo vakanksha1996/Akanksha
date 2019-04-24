@@ -1,0 +1,87 @@
+﻿@model PagedList.IPagedList<Akanksha.AspNetUser>
+@using PagedList.Mvc;
+
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+
+
+<script type="text/javascript">
+ $(document).ready(function() {
+    $("#txtSearch").autocomplete({
+        source: function(request, response) {
+            $.ajax({
+                url: "/Admin/GetUsers",
+                type: "POST",
+                dataType: "json",
+                data: {
+                    keyword: request.term
+                },
+                success: function(data) {
+                    response($.map(data, function(item) {
+                        return {
+                            label: item,
+                            value: item
+                        };
+                    }))
+                },
+                error: function() {
+                    alert('something went wrong !');
+                }
+            })
+        },
+        messages: {
+            noResults: "",
+            results: ""
+        },
+
+
+    });
+}) </script>  
+
+<h2>Users</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+@using (Html.BeginForm("GetAllUsersProfile", "Admin", FormMethod.Get))
+{
+    <p>
+        Find by name: @Html.TextBox("SearchString", ViewBag.CurrentFilter as string,new { id = "txtSearch" })
+        <input type="submit" value="Search" />
+    </p>
+}
+<table class="table">
+    <tr>
+        <th>
+            @Html.ActionLink("UserName", "GetAllUsersProfile", new { sortOrder = ViewBag.NameSortParm, currentFilter = ViewBag.CurrentFilter },new { @style = "color:#428bca" })
+        </th>
+        <th>
+          PhoneNumber
+        </th>
+        <th>
+            @Html.ActionLink("Email", "GetAllUsersProfile", new { sortOrder = ViewBag.DateSortParm, currentFilter = ViewBag.CurrentFilter },new { @style = "color:#428bca" })
+        </th>
+      
+    </tr>
+
+    @foreach (var item in Model)
+    {
+     <tr>
+         <td>
+                @Html.DisplayFor(modelItem => item.UserName)
+         </td>
+         <td>
+                @Html.DisplayFor(modelItem => item.PhoneNumber)
+         </td>
+         <td>
+                @Html.DisplayFor(modelItem => item.Email)
+         </td>
+           
+    </tr>
+    }
+
+</table>
+<br />
+Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+
+@Html.PagedListPager(Model, page => Url.Action("GetAllUsersProfile",
+    new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))

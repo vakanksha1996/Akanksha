@@ -1,0 +1,128 @@
+﻿@model Akanksha.Product
+
+@{
+    ViewBag.Title = "ProductPage";
+}
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+                   
+        var isitemadded =$("#isitemadded").text();
+        var stock = parseInt($("#stock").val());
+            
+        if(isitemadded==0)
+        {
+         
+                $("#atc").css("display","inline");
+                       
+                        
+        }
+        else
+        {           
+           
+                $("#gtc").css("display","inline");
+                        
+        }
+
+        $("#cartbtn").click(function () {
+
+            $.ajax({
+                url: "/Cart/AddtoCart",
+                data: {
+                    productid: $("#productid").val()
+                },
+                method:"GET",
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                
+                success: function (response) {
+                    var gtc = $("#gtc").get();
+                    
+                    if (response == true) 
+                    {
+                        location.reload();                                               
+                                   
+                    }
+
+                    else 
+                    {
+                        toastr.success("Item already added to  Cart")
+                    }
+
+                    toastr.success("Item added to your Cart");
+                     
+                },
+                error: function () {
+                    window.location="http://localhost:55437/Account/Login";
+
+                }
+                
+            });
+        });
+        
+    });
+</script>
+<span style="display:none" id="isitemadded">@ViewBag.IsItemaddedtoCart</span>
+<input type="hidden" id="stock" value=@Model.NumberOfStock/>
+
+<div class="container body-content">
+    <br />
+    <div class="row">
+        
+        <div class="col-md-5">
+
+            @using (Html.BeginForm("CheckOut", "Product",new { productid = Model.ProductId }))
+            {
+                @Html.AntiForgeryToken()
+
+
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                @Html.HiddenFor(model => model.ProductId,new { id = "productid" })
+              
+
+                <div><h4>@Model.Name</h4><hr /></div>
+                <div >Price: <span style="color:red">Rs.@Model.Price</span></div><br />
+                <div> <b>Description:-</b><br /><pre style="border:none">@Model.Description</pre></div>
+
+                <br />
+                <div>
+
+                    <div style="float:left">
+
+                        <input type="submit" class="btn-lg" value="Buy"  />
+                    </div>
+                                                     
+                   
+                    <div  id="atc" style="float:right;display:none">
+                        <div>
+                            <input type="button" id="cartbtn"  class="btn-lg" value="Add to Cart" />
+                        </div>
+                   </div>
+                                      
+                    
+                    <div id="gtc" style="float:right;display:none">
+                         <div>
+                              <div>
+                                    <input type="button" onclick="location.href='@Url.Action("GetCartItemList","Cart")'" style="width:100%" class="btn-lg" value="Go to Cart" />
+                                    <h4 style="color:red">Item added to Cart</h4>
+                              </div>
+                         </div>
+                   </div>
+                    
+
+                </div>
+
+                <br />
+          
+
+            }
+          
+               </div>
+                    <div class="col-md-5">
+                    <div><img src=@Model.Pic alt="no image" width="400" height="350" /></div>
+               </div>              
+       
+    </div>
+          
+</div>

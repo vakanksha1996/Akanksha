@@ -1,0 +1,177 @@
+﻿  @model Akanksha.ViewModel.ShippingViewModel
+@{
+    ViewBag.Title = "SelectShippingAddress";
+    Layout = null;
+}
+
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/bootstrap")
+@Styles.Render("~/Content/css")
+<link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.5.0/css/all.css' integrity='sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU' crossorigin='anonymous'>
+
+
+<script src="~/Scripts/bootbox.js"></script>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $(".del").click(function () {
+            $("form").submit(function (e) {
+                e.preventDefault();
+            });
+            bootbox.confirm("Are you want to delete?", function (result) {
+
+                if (result) {
+                    $.ajax({
+                        url: "/NormalUser/DeleteAddress/" + $(".del").attr("data-id"),
+                        success: function () {
+                            location.reload(true);
+                        },
+                        error: function () {
+                            toastr.error("Something Wrong");
+                        }
+
+
+
+                    })
+                }
+            });
+        });
+       
+    });
+</script>
+
+
+<div class="container body-content" >
+    <i class='fas fa-shopping-bag' style='font-size:36px;margin:5px'></i>
+    <br />
+    @if (Model.Addresses.Count() != 0)
+    {
+        <h2>Select a Shipping Address</h2>
+        <p>Is the address you'd like to use displayed below? If so, click the corresponding "Deliver to this address" button. Or you can enter a new shipping address. </p>
+        <hr />
+        <div class="row">
+            @foreach (var item in Model.Addresses)
+            {
+               
+            <div class="col-md-3">
+               
+                   @using (Html.BeginForm("SelectPaymentMode", "Product"))
+                   {
+                       Model.ShippingAddress = item;
+                    <div class="form-horizontal">
+
+                        @Html.HiddenFor(model => model.Product.ProductId,new { id = "productid" })
+                        @Html.HiddenFor(model => model.User.Id)
+                        @Html.HiddenFor(model => model.ShippingAddress.AddressId)
+                        @Html.HiddenFor(model => model.ShippingAddress.HouseNo)
+                        @Html.HiddenFor(model => model.ShippingAddress.Colony_Street)
+                        @Html.HiddenFor(model => model.ShippingAddress.StateId)
+                        @Html.HiddenFor(model => model.ShippingAddress.City)
+                        @Html.HiddenFor(model => model.ShippingAddress.Pincode)
+
+                                               
+                        <div><b>@Model.User.UserName</b></div>
+                        <div>@item.HouseNo</div>
+                        <div>@item.Colony_Street</div>
+                        <div>@item.City  @item.State.Name  @item.Pincode</div>
+                        <div>Phone: @Model.User.PhoneNumber</div><br />
+                        <div><input type="submit" value="Deliver to this Address" class="btn-lg" style="width:100%" /></div>
+                        <br />
+                        <div>
+                            <button type="button" style="width:50%;float:left" class="btn btn-primary edit" onclick="location.href='@Url.Action("EditShippingAddress", "Product", new { id = item.AddressId,productid=Model.Product.ProductId })'">Edit</button>
+                            <button type="button" style="width:50%" class="btn btn-danger del" data-id=@item.AddressId>Delete</button>
+                        </div>
+                        </div>
+                        }
+                    </div>
+
+                   }
+        </div>
+    }
+
+    <h2>Add New Address</h2>
+
+    @using (Html.BeginForm("SelectPaymentMode","Product"))
+    {
+        @Html.AntiForgeryToken()
+
+        
+        <div class="form-horizontal">
+            <h4>Address</h4>
+            <hr />
+
+
+            @Html.HiddenFor(model => model.Product.ProductId)
+            @Html.HiddenFor(model => model.User.Id)
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            <div class="form-group">
+                @Html.LabelFor(model => model.User.UserName,htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.User.UserName, new { htmlAttributes = new { @class = "form-control" , @readonly = "readonly" } })
+                    @Html.ValidationMessageFor(model => model.User.UserName, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.NewAddress.HouseNo, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.NewAddress.HouseNo, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.NewAddress.HouseNo, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.NewAddress.Colony_Street, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.NewAddress.Colony_Street, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.NewAddress.Colony_Street, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.NewAddress.City, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.NewAddress.City, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.NewAddress.City, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.NewAddress.StateId,"State", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.DropDownListFor(model => model.NewAddress.StateId, new SelectList(Model.States, "StateId", "Name"), "Select State", new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.NewAddress.StateId, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.NewAddress.Pincode, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.NewAddress.Pincode, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.NewAddress.Pincode, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.User.PhoneNumber, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.User.PhoneNumber, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                    @Html.ValidationMessageFor(model => model.User.PhoneNumber, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+           
+    
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="Deliver to this Address" class="btn-lg" />
+                </div>
+            </div>
+        </div>
+    }
+
+
+</div>
+@section Scripts{
+
+    }

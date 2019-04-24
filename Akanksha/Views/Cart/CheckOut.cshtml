@@ -1,0 +1,290 @@
+﻿@model Akanksha.ViewModel.CheckOutViewModel
+@{
+    ViewBag.Title = "CheckOut";
+}
+
+@*@Scripts.Render("~/bundles/jqueryval")*@
+
+<script src="~/Scripts/bootbox.js"></script>
+<script type="text/javascript"> 
+    $(document).ready(function () {
+
+        //$('#btnSubmit').on('click', function() {
+        //    if(this.form.checkValidity()) {
+        //        $(this).attr("disabled", "disabled");
+        //        $(this).val("Submitting...");
+        //        this.form.submit();
+        //    }
+        //});
+
+
+        ///...........................................................
+        //$("#frm").submit(function(e){
+        //    if ($("input[name='Order.PaymentId'][value='1']").is(":checked") || $("input[name='Order.PaymentId'][value='2']").is(":checked") || $("input[name='Order.PaymentId'][value='3']").is(":checked") || $("input[name='Order.PaymentId'][value='4']").is(":checked")) {
+                  
+        //        //alert($('input[type="radio"][name="Order.PaymentId"]:checked').val());
+        //        $("#btnSubmit").replaceWith("<span><b>Please Wait....</b></span>");
+        //        //$("#btnSubmit").val("Processing...");
+        //        //$("#btnSubmit").attr("disabled", "true");
+        //        $("#frm").submit();
+        //    }
+        //    else
+        //    {
+        //        e.preventDefault();
+                   
+        //    }
+
+        //})
+
+        $("#frm").submit(function(){
+
+          
+            $("#btnSubmit").replaceWith("<span><b>Please Wait....</b></span>");
+            $("#btnSubmit").val("Processing...");
+            $("#btnSubmit").attr("disabled", "true");
+        })
+
+          //........................................................
+               
+        $(".del").click(function () {
+            var addrid = $(this).attr("data-id");
+            bootbox.confirm("Are you want to delete?", function (result) {
+
+                if (result) {
+                    $.ajax({
+                        url: "/NormalUser/DeleteAddress/" + addrid,
+
+                        success: function () {
+
+                            location.reload(true);
+                        },
+
+                        error: function () {
+                            toastr.error("Something Wrong");
+                        }
+                        
+                    })
+                }
+            });
+        });
+
+    })
+  
+</script>
+
+
+
+<div class="container body-content" style="background-color:#f2f2f2">
+    <div class="row" style="margin:20px 50px 20px 50px;background-color:white;padding:10px">
+      
+          @{ 
+              decimal subtotal = 0;
+              int itemqty = 0;
+           }
+        <h3>You have following items in your cart</h3><br />
+        <table>
+            <tr>
+                <th width="800px">Name</th>
+                <th>Price</th>
+                <th  width="90px" style="text-align:center">Quantity</th>
+                <th>TotalPrice</th>
+            </tr>
+            @foreach (var item in Model.Cartitems)
+            {
+                var totalprice = item.Quantity * item.Product.Price;
+                subtotal = subtotal + totalprice;
+                itemqty = itemqty + item.Quantity;
+
+            <tr>
+                <td   width="800" style="color:#0000b3">@item.Product.Name</td>
+                <td style="text-align:right">@item.Product.Price</td>
+                <td  width="90px" style="text-align:center">@item.Quantity</td>
+                <td  style="text-align:right">@totalprice</td>
+                   
+           </tr>
+
+            }
+        </table>
+        <h4 style="color:indianred;float:right" >
+            Total Amount to Pay: @subtotal
+        </h4>
+
+    </div>
+  
+    @if (Model.address != null)
+   {
+      
+    <div class="row" style="margin:20px 50px 20px 50px">
+
+          <div><span style="color:indianred">Order will be delivered on this Address</span></div>
+            <div class="col-md-3">
+
+                <div><b>@Model.Cartitems.FirstOrDefault().AspNetUser.UserName</b></div>
+                <div>@Model.address.HouseNo</div>
+                <div>@Model.address.Colony_Street</div>
+                <div>@Model.address.City   @Model.address.State.Name   @Model.address.Pincode</div>
+                <div>Phone: @Model.Cartitems.FirstOrDefault().AspNetUser.PhoneNumber</div><br />
+               
+           </div>
+    </div>
+
+        using (Html.BeginForm("OrderCompletion", "Cart",new { AddressId = Model.address.AddressId },FormMethod.Post,new { @id = "frm" }))
+
+        {
+          <div class="form-horizontal" style="margin:20px 50px 20px 50px">
+                <h2>Select Payment Type</h2>
+
+              @{
+                  Model.Order = new Order();
+                Model.Order.Subtotal = subtotal;
+                  Model.Order.ItemQuantity = itemqty;
+
+            }
+              @Html.HiddenFor(model => model.Order.ItemQuantity)
+              @Html.HiddenFor(model=>model.Order.Subtotal)
+      
+
+              
+                <hr />
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })                             
+
+                <div class="form-group">
+
+                    <div class="col-md-10">
+                        @foreach (var item in Model.PaymentModes)
+                        {
+                            @Html.RadioButtonFor(model => model.Order.PaymentId, item.PaymentId, new { htmlAttributes = new { @id = "rb" } })<text>&nbsp;</text>
+                            @Html.Label(@item.PaymentMode)<text> &nbsp; &nbsp; &nbsp; &nbsp;</text>
+
+                        } 
+                        @Html.ValidationMessageFor(m => m.Order.PaymentId, "", new { @class = "text-danger" })
+
+                    </div>
+                   
+                </div>
+              <div class="form-group">
+                  <div class="col-md-offset-2 col-md-10">
+                      <input type="submit" id="btnSubmit" value="Done" class="btn btn-default" />
+                  </div>
+              </div>
+              
+            </div>
+        }
+
+        }
+
+    else
+    {
+        if (Model.AddressBook.Count() != 0)
+      {
+      <div style="margin:20px 50px 20px 50px">
+
+            <h2>Select a Shipping Address</h2>
+
+            <p>Is the address you'd like to use displayed below? If so, click the corresponding "Deliver to this address" button. Or you can enter a new shipping address. </p>
+           
+            <hr />
+     
+           @Html.AntiForgeryToken()
+
+            <div class="row">
+
+                @foreach (var item in Model.AddressBook)
+
+                {
+                    
+                    <div  class="col-md-3" style="margin-bottom:10px">                                              
+
+                         <div><b>@Model.Cartitems.FirstOrDefault().AspNetUser.UserName</b></div>
+                         <div>@item.HouseNo</div>
+                         <div>@item.Colony_Street</div>
+                         <div>@item.City  @item.State.Name  @item.Pincode</div>
+                         <div>Phone: @Model.Cartitems.FirstOrDefault().AspNetUser.PhoneNumber</div><br />
+                         <div><input type="button"  value="Deliver to this Address" class="btn-lg da" data-addressid=@item.AddressId style="width:100%" onclick="location.href='@Url.Action("CheckOut","cart",new { addressid = item.AddressId })'"/></div>
+                         <br />
+                         <div>
+                        <button type="button" style="width:50%;float:left" class="btn btn-primary edit" onclick="location.href='@Url.Action("EditShippingAddress", "Cart", new { id = item.AddressId })'">Edit</button>
+                        <button type="button" style="width:50%" class="btn btn-danger del" data-id=@item.AddressId>Delete</button>
+                        </div>
+                            
+                         
+                   </div>
+
+                    }
+                
+
+                
+            </div>
+
+      </div>
+
+   }
+
+   using (Html.BeginForm("CheckOut", "Cart"))
+    {
+      <div style="margin:20px 50px 20px 50px" class="form-horizontal">
+
+                <h2>Add New Address</h2>
+
+                <hr />
+          
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+               
+                <div class="form-group">
+                    @Html.LabelFor(model => model.address.HouseNo, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.address.HouseNo, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.address.HouseNo, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.address.Colony_Street, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.address.Colony_Street, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.address.Colony_Street, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.address.City, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.address.City, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.address.City, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.address.StateId, "State", htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.DropDownListFor(model => model.address.StateId, new SelectList(Model.States, "StateId", "Name"), "Select State", new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.address.StateId, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.address.Pincode, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.address.Pincode, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.address.Pincode, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+               
+
+
+
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+                        <input type="submit" value="Deliver to this Address" class="btn-lg" />
+                    </div>
+                </div>
+            </div>
+        }
+    }
+
+</div>
+
+
+@*@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}*@

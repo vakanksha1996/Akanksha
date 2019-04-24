@@ -1,0 +1,32 @@
+﻿@model Akanksha.AspNetUser
+@{
+    ViewBag.Title = "Account";
+}
+
+<div class="container">
+    <h2>Your Account</h2>
+    <p>Manage your Account Settings.</p>
+    <div class="panel-group">
+
+        <div class="panel panel-default">
+            <div class="panel-heading"><img alt="Your Orders" src="https://images-na.ssl-images-amazon.com/images/G/01/x-locale/cs/ya/images/Box._CB529917462_.png">  Your Orders</div>
+            <div class="panel-body">@Html.ActionLink("Track, return, or buy things again","GetOrders",null,new { @style = "color:black" })</div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading"><img alt="Login & security" src="https://images-na.ssl-images-amazon.com/images/G/01/x-locale/cs/ya/images/sign-in-lock._CB529917462_.png"> Login &amp; security</div>
+            <div class="panel-body">@Html.ActionLink("Edit login, name, and mobile number","EditProfile","NormalUser",new { id = Model.Id }, new { @style = "color:black" })</div>
+        </div>
+
+    
+        <div class="panel panel-default">
+            <div class="panel-heading"><img alt="Your Addresses" src="https://images-na.ssl-images-amazon.com/images/G/01/x-locale/cs/ya/images/address-map-pin._CB529299312_.png">  Your Addresses</div>
+            <div class="panel-body">@Html.ActionLink("Edit addresses for Orders and Gifts","YourAddresses","NormalUser", null, new { @style = "color:black" })</div>
+        </div>
+
+         <div class="panel panel-default">
+            <div class="panel-heading"><img alt="Your Addresses" src="https://images-na.ssl-images-amazon.com/images/G/01/x-locale/cs/ya/images/Payments._CB529917462_.png">  Payment Options</div>
+            <div class="panel-body">@Html.ActionLink("Edit or add payment methods", "AddPayment","NormalUser",new { id = Model.Id }, new { @style = "color:black" })</div>
+        </div>
+    </div>
+</div>

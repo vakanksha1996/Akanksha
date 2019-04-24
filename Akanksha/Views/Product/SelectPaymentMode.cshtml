@@ -1,0 +1,118 @@
+﻿@model Akanksha.ViewModel.OrderViewModel
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/jqueryval")
+@Styles.Render("~/Content/css")
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>SelectPaymentMode</title>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var flag;
+            $("#qtyid").keyup(function () {
+              
+                //alert("In keyup function");
+                 var   quantity = parseInt($("#qtyid").val());
+                var  stockAvailable =parseInt($("#totalstock").val());
+                //alert(quantity+stockAvailable);
+                if (quantity > stockAvailable) {
+                    //alert("in if block");
+                    $("#qtyerror").text("Only " + stockAvailable + " quantity is available");
+                    $("#qtyerror").css("color", "red");
+                    $("#qtyid").css("border", "2px solid red");
+                    flag = 0;
+          
+                }
+                else
+                {
+                    $("#qtyerror").text("");
+                   // $("#qtyerror").attr("display", "none");
+                    $("#qtyid").css("border", "1px solid #cccccc");
+                    flag = 1;
+
+                }
+
+            }
+            );
+            $("form").submit(function (e) {
+                if ($("form").valid() && flag == 1)
+                {
+                    this.submit();
+                }
+                else
+                {
+                   
+                        e.preventDefault();
+                    
+                }
+            });
+
+        });
+    </script>
+</head>
+<body>
+ 
+    
+    @using (Html.BeginForm("OrderCompleted","Product")) 
+    {
+        @Html.AntiForgeryToken()
+        
+        <div class="form-horizontal">
+
+            @Html.HiddenFor(model => model.Product.ProductId)
+            @Html.HiddenFor(model => model.ShippingAddress.AddressId)
+            @Html.HiddenFor(model => model.User.Id)
+            @Html.HiddenFor(model =>model.Product.NumberOfStock,new { id = "totalstock" })
+
+
+            <h4>Order</h4>
+            <hr />
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            <div class="form-group">
+                @Html.LabelFor(model => model.Order.ProductQuantity, "Qty:",htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Order.ProductQuantity, new { htmlAttributes = new { @class = "form-control",@id="qtyid" } })
+                    @*<input type="" id="qtyerror" /><br />*@
+                    <label id="qtyerror" ></label><br />
+                    @Html.ValidationMessageFor(model => model.Order.ProductQuantity, "", new { @class = "text-danger" })
+                </div>
+            </div>
+    
+         
+            <div class="form-group">
+                @Html.LabelFor(model => model.Order.PaymentId,"Payment Mode", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @foreach (var item in Model.PaymentList)
+                    {
+                        @Html.RadioButtonFor(model => model.Order.PaymentId, item.PaymentId, new { htmlAttributes = new { })
+                        @Html.Label(@item.PaymentMode)<br />
+                       
+                    }
+                    @Html.ValidationMessageFor(m=> m.Order.PaymentId, "", new { @class = "text-danger" })
+
+
+                </div>
+
+
+
+            </div>
+
+        
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="Done" class="btn btn-default" />
+                </div>
+            </div>
+        </div>
+
+     
+    }
+  
+</body>
+</html>

@@ -1,0 +1,222 @@
+﻿  @model IEnumerable<Akanksha.Cart>
+
+@{
+    ViewBag.Title = "GetCartItemList";
+}
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        $(".remove").click(function () {
+            $.ajax({
+                url: "/Cart/RemovefromCart",
+                data: { id : $(this).attr("data-id")},
+                method: "GET",
+
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function (response) {
+
+                    if (response) {
+                  //     // location.reload(true);
+
+                  //     // var parent = $($(this).parent()).parent().remove();
+                  //      toastr.success("Item removed form Cart");
+                  //      toastr.options.timeout = 10000;
+
+                  ////      parent.parent().remove();
+
+                        location.reload(true);
+                    }
+                    else {
+                        toastr.error("Some db error Occured.");
+                    }
+
+                },
+                error: function () {
+                    toastr.options.timeout = 0;
+                    alert("some error occured.");
+
+                }
+            })
+        });
+        $(".qty").each(function () {
+
+                var stock = $(this).attr("data");
+                var quantity = parseInt($(this).val());
+
+                if (stock == 0)
+                {
+                    $(this).siblings("span").text("Item is out of Stock.");
+
+                    $(this).css("border", "2px solid red");
+                    
+
+                }
+
+                else if (stock < quantity)
+                {
+                    $(this).siblings("span").text("Only " + stock + " quantities of item is available .");
+
+                    $(this).css("border", "2px solid red");
+                    // alert("select atleast 1 quantity.");
+                    $("form").submit(function (e) {
+                        e.preventDefault();
+                    });
+                }
+            })
+                
+
+            $(".qty").change(function () {
+               
+                var stock = $(this).attr("data");
+                var quantity = parseInt($(this).val());
+
+                if (stock == 0)
+                {
+                    $(this).siblings("span").text("Item is out of Stock.");
+                    $(this).css("border", "2px solid red");
+                }
+
+                else if (isNaN(quantity))
+                {
+                    $(this).siblings("span").text("Select atleast 1 quantity.");
+                     $(this).css("border", "2px solid red");
+                    // alert("select atleast 1 quantity.");
+                    $("form").submit(function(e){
+                        e.preventDefault();
+                    });                                                      
+                   
+                }
+
+                else if (quantity > stock)
+                {
+                               
+                 $(this).siblings("span").text("Only " + stock + " quantities of item is available .");
+                 $(this).css("border", "2px solid red");
+
+                    $("form").submit(function(e){
+                        e.preventDefault();
+                    })
+                                       
+                }
+
+                else if (quantity >= 1 && quantity <= stock)
+                {
+
+                 $(this).siblings("span").text("");
+                 $(this).css("border", "1px solid #cccccc");
+
+                $.ajax({
+                        url: "/Cart/UpdateQuantity",
+                        data: { cartid: $(this).attr("dataid"), qty: $(this).val() },
+                        method: "GET",
+
+                        dataType: "json",
+                        contentType: "application/json; charset=utf-8",
+                        success: function (response) {
+                            $("form").unbind("submit");
+
+                        },
+                        error: function () {
+                            toastr.options.timeout = 0;
+                            alert("some error occured.");
+
+                        }
+                    })
+
+                }
+
+             else
+             {
+                 $(this).siblings("span").text("Select atleast 1 quantity.");
+                 $(this).css("border", "2px solid red");
+                 $("form").submit(function (e) {
+                     e.preventDefault();
+                 })
+             }
+
+
+            })
+                    
+    });
+</script>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+
+<div  class="container body-content">
+    
+    <h2>Shopping Cart</h2>
+
+    <div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-md-4"></div>
+        <div class="col-md-2">Price</div>
+        <div class="col-md-2">Quantity</div>
+        <div class="col-md-2"></div>
+    </div>
+
+    <hr />
+
+    @{
+        decimal subtotal = 0;
+        int totalitem = 0;
+    }
+   
+
+    @foreach (var item in Model)
+    {
+           
+            <div  class="row">
+
+                <div class="col-md-2">
+                    <a href="@Url.Action("ProductPage","Product",new { id = item.Product.ProductId })" ><img src=@item.Product.Pic alt="no image" width="150" height="90" />
+                    </a>
+                </div>
+
+                <div class="col-md-4" >
+                   <a style="color:#0066c0" href="@Url.Action("ProductPage","Product",new { id = item.Product.ProductId })"><b>@item.Product.Name</b></a>
+                </div>
+
+                <div id ="amt" class="col-md-2" style="color:#B12704">
+                    <b>
+                        Rs. @item.Product.Price
+                    </b>
+                </div>
+
+                <div  class="col-md-2">
+                    @Html.TextBoxFor(modelItem => item.Quantity,  new { style = "width:50px;margin:5px",@min="1", @class = "qty" ,data=item.Product.NumberOfStock ,amount = item.Product.Price,dataid=item.CartId,@type="number"})<br />
+                    <span style="color:red" id="txtbox"></span>
+                </div>
+
+             @{   subtotal = subtotal + item.Amount * item.Quantity;
+                 totalitem = totalitem + item.Quantity;
+              }
+
+                <div class="col-md-2">
+                    <a class="btn btn-primary remove" data-id=@item.CartId>Remove</a>
+                </div>
+                                 
+            </div>
+         
+    <hr />
+    }
+
+  
+    @using (Html.BeginForm("CheckOut", "Cart"))
+    {
+        <div class="row">
+
+            <div class="col-md-3" style="border:1px solid azure;border-radius:5px;background-color:#f2f2f2;float:right">
+               
+                 <button type="submit" style="width:100%;margin-top:10px;margin-bottom:10px;" class="btn btn-primary" >Proceed to Checkout</button>
+            </div>
+
+        </div>
+    }
+
+</div>
+

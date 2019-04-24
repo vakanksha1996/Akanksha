@@ -1,0 +1,36 @@
+﻿@model IEnumerable<Akanksha.Subcategory> 
+
+@{
+    ViewBag.Title = "GetSubcategoriesByCategoryName";
+}
+
+
+<div class="container body-content">
+    @if (Model.Count() != 0)
+    {
+        <h1>The @Model.First().Category.Name</h1>
+        <div>@Model.First().Category.Description</div>
+        <hr />
+        <div class="row"><h1 style="text-align:center">Shop By Category</h1></div>
+        <div class="row">
+            @foreach (var item in Model)
+            {
+                <div class="col-sm-3" style="height:300px">
+                    <div class="panel panel-primary" style="height:100%">
+                        <div class="panel-heading" style="height:20%"><a href="@Url.Action("GetProductsByName", "Product", new { name = item.Name })">@item.Name</a></div>
+                        <div class="panel-body" style="height:80%"><a href="@Url.Action("GetProductsByName", "Product", new { name = item.Name })"><img src=@item.Pic class="img-responsive" style="width:100%;height:100%" alt="Image"></a></div>
+
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <h1>Currently no Category  and Products available.</h1>
+
+    }
+
+</div><br><br>
+
+
